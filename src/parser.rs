@@ -147,6 +147,19 @@ impl<'input> Parser<'input> {
         self.numeric()
     }
 
+    /// Parse a dot, then a numeric. If the dot is missing, returns numeric 0.
+    /// This allows us to parse versions such as "1.2", which is a shorthand for
+    /// "1.2.0", or "1", which is a shorthand for "1.0.0".
+    /// This is the difference between the parent and this fork.
+    pub fn dot_numeric_or_zero(&mut self) -> Result<u64, Error<'input>> {
+        match self.pop() {
+            Ok(Token::Dot) => self.numeric(),
+            Ok(tok) => Err(UnexpectedToken(tok)),
+            Err(Error::UnexpectedEnd) => Ok(0),
+            Err(e) => Err(e),
+        }
+    }
+
     /// Parse an string identifier.
     ///
     /// Like, `foo`, or `bar`, or `beta-1`.
@@ -222,8 +235,8 @@ impl<'input> Parser<'input> {
         self.skip_whitespace()?;
 
         let major = self.numeric()?;
-        let minor = self.dot_numeric()?;
-        let patch = self.dot_numeric()?;
+        let minor = self.dot_numeric_or_zero()?;
+        let patch = self.dot_numeric_or_zero()?;
         let pre = self.pre()?;
         let build = self.plus_build_metadata()?;
 

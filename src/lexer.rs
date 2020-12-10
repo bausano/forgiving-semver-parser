@@ -11,7 +11,7 @@
 //! Example without errors:
 //!
 //! ```rust
-//! use semver_parser::lexer::{Lexer, Token};
+//! use forgiving_semver_parser::lexer::{Lexer, Token};
 //!
 //! let mut l = Lexer::new("foo 123 *");
 //!
@@ -26,7 +26,7 @@
 //! Example with error:
 //!
 //! ```rust
-//! use semver_parser::lexer::{Lexer, Token, Error};
+//! use forgiving_semver_parser::lexer::{Lexer, Token, Error};
 //!
 //! let mut l = Lexer::new("foo / *");
 //!

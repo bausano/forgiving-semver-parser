@@ -8,7 +8,7 @@
 //! Parsing `Version` from string and checking its fields:
 //!
 //! ```
-//! use semver_parser::version;
+//! use forgiving_semver_parser::version;
 //!
 //! # fn try_main() -> Result<(), String> {
 //! let version = version::parse("1.2.3-alpha1")?;
@@ -43,7 +43,7 @@ use std::fmt;
 /// Parsing `Version` from string and checking its fields:
 ///
 /// ```
-/// use semver_parser::version;
+/// use forgiving_semver_parser::version;
 ///
 /// # fn try_main() -> Result<(), String> {
 /// let version = version::parse("0.1.2-alpha1")?;
@@ -83,7 +83,7 @@ pub struct Version {
 /// Parsing [`Version`] with pre-release part composed of two `Identifier`s:
 ///
 /// ```
-/// use semver_parser::version;
+/// use forgiving_semver_parser::version;
 ///
 /// # fn try_main() -> Result<(), String> {
 /// let version = version::parse("0.1.2-alpha1.0")?;
@@ -126,7 +126,7 @@ impl Identifier {
 /// Parsing [`Version`] from string and checking its fields:
 ///
 /// ```
-/// use semver_parser::version;
+/// use forgiving_semver_parser::version;
 ///
 /// # fn try_main() -> Result<(), String> {
 /// let version = version::parse("0.1.2-alpha1")?;
@@ -206,14 +206,19 @@ mod tests {
     }
 
     #[test]
-    fn parse_no_minor_patch() {
+    fn parse_minor_patch() {
         let version = "1";
 
-        let parsed = version::parse(version);
-
-        assert!(
-            parsed.is_err(),
-            format!("'{}' incorrectly considered a valid parse", version)
+        assert_eq!(
+            Ok(Version {
+                major: 1,
+                minor: 0,
+                patch: 0,
+                pre: vec![],
+                build: vec![],
+            }),
+            version::parse(version),
+            "should default missing minor and patch"
         );
     }
 
@@ -221,11 +226,16 @@ mod tests {
     fn parse_no_patch() {
         let version = "1.2";
 
-        let parsed = version::parse(version);
-
-        assert!(
-            parsed.is_err(),
-            format!("'{}' incorrectly considered a valid parse", version)
+        assert_eq!(
+            Ok(Version {
+                major: 1,
+                minor: 2,
+                patch: 0,
+                pre: vec![],
+                build: vec![],
+            }),
+            version::parse(version),
+            "should default missing patch"
         );
     }
 

@@ -1,5 +1,5 @@
-use semver_parser::Compat;
-use semver_parser::RangeSet;
+use forgiving_semver_parser::Compat;
+use forgiving_semver_parser::RangeSet;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
